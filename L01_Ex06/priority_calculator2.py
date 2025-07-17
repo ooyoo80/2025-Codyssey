@@ -8,10 +8,11 @@ def multiply(a, b):
     return a * b
 
 def divide(a, b):
-    if b == 0:
+    try:
+        return a / b
+    except ZeroDivisionError:
         print("Error: Division by zero.")
         exit()
-    return a / b
 
 def is_float(a) :  # 실수 연산자 구분용
     try :
@@ -24,55 +25,54 @@ def check_parenthesis(list_input) :  # 괄호 짝 확인용
     if "(" not in list_input and ")" not in list_input :
         print("Invalid input.")
         exit()
-    
+
+def input_expr(expr) :
+    try :
+        tokens = expr.strip().split()
+    except ValueError :
+        print("Invalid input.")
+        exit()
+    return tokens
+
+
 dic_calculate = {"+" : add, "-" : subtract, "*" : multiply, "/" : divide}
 dic_precedence = {'+': 1, '-': 1, '*': 2, '/': 2}
 
 
-def postfix_notation(expr): # 중위표기식 -> 후위표기식
-    try:
-        tokens = expr.strip().split()
-        if len(tokens) < 3 or len(tokens) % 2 == 0:
+def calculate_expr(expr): # 중위표기식(input) -> 후위표기식
+    tokens = input_expr(expr)
+    list_output = []
+    list_stack = []
+
+    for comp in tokens:
+        if is_float(comp):
+            list_output.append(comp)
+
+        elif comp == "(":
+            list_stack.append(comp)
+            check_parenthesis(tokens)
+        elif comp == ")":
+            check_parenthesis(tokens)
+            while list_stack[-1] != "(":
+                list_output.append(list_stack.pop())
+            list_stack.pop()
+
+        elif comp in dic_calculate:  # 연산자
+            while (
+                list_stack and
+                list_stack[-1] != "(" and
+                dic_precedence[list_stack[-1]] >= dic_precedence[comp]
+            ):
+                list_output.append(list_stack.pop())
+            list_stack.append(comp)
+        else :
             print("Invalid input.")
             exit()
 
-        list_output = []
-        list_stack = []
-
-        for comp in tokens:
-            if is_float(comp):
-                list_output.append(comp)
-
-            elif comp == "(":
-                list_stack.append(comp)
-                check_parenthesis(tokens)
-            elif comp == ")":
-                check_parenthesis(tokens)
-                while list_stack[-1] != "(":
-                    list_output.append(list_stack.pop())
-                list_stack.pop()
-
-            elif comp in dic_calculate:  # 연산자
-                while (
-                    list_stack and
-                    list_stack[-1] != "(" and
-                    dic_precedence[list_stack[-1]] >= dic_precedence[comp]
-                ):
-                    list_output.append(list_stack.pop())
-                list_stack.append(comp)
-            else :
-                print("Invalid input.")
-                exit()
-
-        while list_stack:
-            list_output.append(list_stack.pop())
-        
-        return calculate_nota(list_output)
-
-
-    except ValueError :
-        print("Invalid input.")
-        exit()
+    while list_stack:
+        list_output.append(list_stack.pop())
+    
+    return calculate_nota(list_output)
 
 
 def calculate_nota(list_input) :  # 후위표기식 계산
@@ -92,9 +92,8 @@ def calculate_nota(list_input) :  # 후위표기식 계산
 
 def main():
     expr = input("")
-    final_result = postfix_notation(expr)
+    final_result = calculate_expr(expr)
     print(f"Result: {final_result}")
-    
-        
+       
 if __name__ == "__main__":
     main()
