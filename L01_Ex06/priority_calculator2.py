@@ -21,11 +21,6 @@ def is_float(a) :  # 실수 연산자 구분용
     except ValueError :
         return False
 
-def check_parenthesis(list_input) :  # 괄호 짝 확인용
-    if "(" not in list_input and ")" not in list_input :
-        print("Invalid input.")
-        exit()
-
 def input_expr(expr) :
     try :
         tokens = expr.strip().split()
@@ -47,21 +42,27 @@ def calculate_expr(expr): # 중위표기식(input) -> 후위표기식
     for comp in tokens:
         if is_float(comp):
             list_output.append(comp)
-
         elif comp == "(":
             list_stack.append(comp)
-            check_parenthesis(tokens)
+
         elif comp == ")":
-            check_parenthesis(tokens)
-            while list_stack[-1] != "(":
-                list_output.append(list_stack.pop())
-            list_stack.pop()
+            check_parenthesis = False
+            while list_stack :
+                top = list_stack.pop()
+                if top == "(" :
+                    check_parenthesis = True
+                    break
+                else :
+                    list_output.append(top)
+            if not check_parenthesis :
+                print("Error: Mismatched parentheses.")
+                exit()
 
         elif comp in dic_calculate:  # 연산자
             while (
                 list_stack and
                 list_stack[-1] != "(" and
-                dic_precedence[list_stack[-1]] >= dic_precedence[comp]
+                dic_precedence.get(list_stack[-1], 0) >= dic_precedence[comp]
             ):
                 list_output.append(list_stack.pop())
             list_stack.append(comp)
@@ -83,9 +84,9 @@ def calculate_nota(list_input) :  # 후위표기식 계산
         else :
             second_num = list_stack.pop()
             first_num = list_stack.pop()
-            if comp in dic_calculate :
-                result = dic_calculate[comp](first_num, second_num)
-                list_stack.append(result)
+            
+            result = dic_calculate[comp](first_num, second_num)
+            list_stack.append(result)
 
     return result
 
