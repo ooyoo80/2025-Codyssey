@@ -15,13 +15,18 @@ def read_inventory(path) :
     return header
 
 
-def change_inventory_to_list(path) : # 전체 값 중 숫자를 float형으로 변경 후 리스트 저장
+def change_inventory_to_list(path) : 
     list_inventory = []
     with open(path, "r", encoding="utf-8") as f :
         reader = csv.reader(f)
         header = next(reader)
 
         for row in reader :
+            for i in range(len(row)) :
+                try :
+                    row[i] = float(row[i])
+                except ValueError :
+                    continue
             list_inventory.append(row)
     
     print("=========== 리스트 출력 ===========")
@@ -55,18 +60,22 @@ def filter_as_flammability(index, list_inventory) :
     
     for inx in range(len(index)):
         if index[inx] == "Flammability" :
-            flammability_index = inx #옳은 값
+            flammability_index = inx
             break
 
     for row in list_inventory :
         
         row_val = float(row[flammability_index])
 
-        if row_val >= 0.7 : #문자형이라 비교 불가
+        if row_val >= 0.7 :
             list_filter.append(row)
-    
+
+    print("=========== flammability 0.7 이상 필터링 출력 ===========")
     for row in list_filter :
         print(row)
+    print("=========== flammability 0.7 이상 필터링 출력 완료 ===========\n")
+
+    return list_filter
 
 
 def main() :
