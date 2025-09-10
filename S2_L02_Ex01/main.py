@@ -2,8 +2,28 @@ import csv
 import json
 from datetime import datetime
 
+
 file_path = "S2_L02_Ex01/mission_computer_main.log"
 json_file = "S2_L02_Ex01/mission_computer_main.json"
+
+important_word = ["explosion", "unstable"]
+
+
+# def filter_important_phrases(path, phrases) :
+#     important_lines = []
+
+#     with open(path, "r", encoding="utf-8") as f:
+#         f = f.readlines()
+    
+#     for line in f:
+#         line = line.strip()
+#         for phrase in phrases:
+#             if phrase in line:
+#                 important_lines.append(line)
+#                 break
+    
+#     print(important_lines)
+
 
 def print_info(path) :
     list_separ = []
@@ -51,7 +71,7 @@ def save_to_json(dict_separ, file_name) :
 def main() :
     try :
         save_to_json(print_info(file_path), json_file)
-
+        # filter_important_phrases(file_path, important_word)
     except FileNotFoundError :
         print("File not found")
         exit()
