@@ -1,6 +1,8 @@
 import csv
 
 file1_path = "S2_L02_Ex02/mars_base/Mars_Base_Inventory_List.csv"
+new_file_name = "Mars_Base_Inventory_danger.csv"
+
 
 def read_inventory(path) :
     with open(path, "r", encoding="utf-8") as f :
@@ -78,17 +80,30 @@ def filter_as_flammability(index, list_inventory) :
     return list_filter
 
 
+def save_to_csv(header, data, file_name) :
+    with open(file_name, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)   # 헤더 작성
+        writer.writerows(data)    # 데이터 작성
+
+    print(f"CSV 파일 저장 완료 → {file_name}")
+
+
 def main() :
     try: 
         header = read_inventory(file1_path)
         list_necessary = change_inventory_to_list(file1_path)
         list_reversed = sorted_list_flammability(list_necessary, header)
-        filter_as_flammability(header, list_reversed)
+        list_filter = filter_as_flammability(header, list_reversed)
+        save_to_csv(header, list_filter, new_file_name)
 
     except FileNotFoundError :
         print("File not found")
         exit()
-        
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        exit()
+
 
 if __name__ == "__main__" :
     main()
