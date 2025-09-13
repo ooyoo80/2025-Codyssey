@@ -1,7 +1,8 @@
 import random
 import json
 import time
-
+import psutil
+import platform
 
 class DummySensor :
     def __init__(self) :
@@ -41,14 +42,8 @@ class DummySensor :
 
 class MissionComputer :
     def __init__(self) :
-        self.env_values = {
-        "mars_base_internal_temperature": 0,
-        "mars_base_external_temperature": 0,
-        "mars_base_internal_humidity": 0,
-        "mars_base_external_illuminance": 0,
-        "mars_base_internal_co2": 0,
-        "mars_base_internal_oxygen": 0
-    }
+        self.env_values = {}
+        self.dic_info = {}
         
     def get_sensor_data(self, sensor) :
         while True:
@@ -60,12 +55,41 @@ class MissionComputer :
 
             time.sleep(5)
 
+    def get_mission_computer_info(self) :
+        os_name = platform.system()
+        os_version = platform.version()
+
+        cpu_type = platform.processor()
+        cpu_count = psutil.cpu_count(logical=True)
+        cpu_count_physical = psutil.cpu_count(logical=False)
+
+        memory_total = psutil.virtual_memory().total
+        memory_gb = round(memory_total / (1024**3), 2)
+
+        self.dic_info = {
+            "os name": os_name,
+            "os version": os_version,
+            "cpu type": cpu_type,
+            "num of cpu cores": cpu_count_physical,
+            "memory size": memory_gb
+        }
+    
+    def get_mission_computer_load(self) :
+        json_dic = json.dumps(self.dic_info)
+
+        print(json_dic)
+
 
 def main() :
     ds = DummySensor()
-    RunComputer = MissionComputer()
-    
-    RunComputer.get_sensor_data(ds)
+    runComputer = MissionComputer()
+
+    print("========== computer_info 출력 ==========")
+    runComputer.get_mission_computer_info()
+    runComputer.get_mission_computer_load()
+    print("========== computer_info 출력 완료 ==========\n")
+
+    runComputer.get_sensor_data(ds)
     
 
 if __name__ == "__main__" :
