@@ -1,7 +1,7 @@
 import csv
 
 file1_path = "S2_L02_Ex02/mars_base/Mars_Base_Inventory_List.csv"
-new_file_name = "Mars_Base_Inventory_danger.csv"
+new_file_name = "S2_L02_Ex02/mars_base_result/Mars_Base_Inventory_danger.csv"
 
 
 def read_inventory(path) :
