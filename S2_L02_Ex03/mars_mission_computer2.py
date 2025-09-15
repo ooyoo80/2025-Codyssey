@@ -3,7 +3,7 @@ import json
 import time
 import psutil
 import platform
-from threading import Thread
+from multiprocessing import Process
 
 
 class DummySensor :
@@ -47,7 +47,7 @@ class MissionComputer :
         self.env_values = {}
         self.dic_info = {}
         self.dic_load = {}
-        
+
     def get_sensor_data(self, sensor) :
         while True:
             sensor.set_env()              
@@ -107,20 +107,22 @@ class MissionComputer :
 
 def main() :
     ds = DummySensor()
-    runComputer = MissionComputer()
+    runComputer1 = MissionComputer()
+    runComputer2 = MissionComputer()
+    runComputer3 = MissionComputer()
 
-    t1 = Thread(target=runComputer.get_mission_computer_info)
-    t2 = Thread(target=runComputer.get_mission_computer_load)
-    t3 = Thread(target=runComputer.get_sensor_data, args=(ds,))
+    p1 = Process(target=runComputer1.get_mission_computer_info)
+    p2 = Process(target=runComputer2.get_mission_computer_load)
+    p3 = Process(target=runComputer3.get_sensor_data, args=(ds,))
+
+    p1.start()
+    p2.start()
+    p3.start()
+
+    p1.join()
+    p2.join()
+    p3.join()
     
-    t1.start()
-    t2.start()
-    t3.start()
-
-    t1.join()
-    t2.join()
-    t3.join()
-
 
 if __name__ == "__main__" :
     main()
