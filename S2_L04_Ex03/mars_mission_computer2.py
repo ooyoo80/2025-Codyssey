@@ -18,40 +18,25 @@ class DummySensor :
     }
 
     def set_env(self) :
-        for key in self.env_values.keys() :
-            if key == "mars_base_internal_temperature" :
-                rand_int = random.randint(18, 30)
-                self.env_values[key] = rand_int
-            elif key == "mars_base_external_temperature" :
-                rand_int = random.randint(0, 21)
-                self.env_values[key] = rand_int
-            elif key == "mars_base_internal_humidity" :
-                rand_int = random.randint(50, 60)
-                self.env_values[key] = rand_int
-            elif key == "mars_base_external_illuminance" :
-                rand_int = random.randint(500, 715)
-                self.env_values[key] = rand_int
-            elif key == "mars_base_internal_co2" :
-                rand_float = random.uniform(0.02, 0.1)
-                self.env_values[key] = round(rand_float, 3)
-            else :
-                rand_int = random.randint(4, 7)
-                self.env_values[key] = rand_int
+        self.env_values["mars_base_internal_temperature"] = random.randint(18, 30)
+        self.env_values["mars_base_external_temperature"] = random.randint(0, 21)
+        self.env_values["mars_base_internal_humidity"] = random.randint(50, 60)
+        self.env_values["mars_base_external_illuminance"] = random.randint(500, 715)
+        self.env_values["mars_base_internal_co2"] = round(random.uniform(0.02, 0.1), 3)
+        self.env_values["mars_base_internal_oxygen"] = random.randint(4, 7)
 
     def get_env(self) :
         return self.env_values
 
 
 class MissionComputer :
-    def __init__(self) :
-        self.env_values = {}
-        self.dic_info = {}
-        self.dic_load = {}
+    def __init__(self, sensor) :
+        self.sensor = sensor
 
-    def get_sensor_data(self, sensor) :
+    def get_sensor_data(self) :
         while True:
-            sensor.set_env()              
-            self.env_values = sensor.get_env()  
+            self.sensor.set_env()              
+            self.env_values = self.sensor.get_env()  
 
             json_env = json.dumps(self.env_values, indent=4)
 
@@ -107,9 +92,9 @@ class MissionComputer :
 
 def main() :
     ds = DummySensor()
-    runComputer1 = MissionComputer()
-    runComputer2 = MissionComputer()
-    runComputer3 = MissionComputer()
+    runComputer1 = MissionComputer(ds)
+    runComputer2 = MissionComputer(ds)
+    runComputer3 = MissionComputer(ds)
 
     p1 = Process(target=runComputer1.get_mission_computer_info)
     p2 = Process(target=runComputer2.get_mission_computer_load)

@@ -6,7 +6,7 @@ from datetime import datetime
 file_path = "S2_L02_Ex01/mission_computer_main.log"
 json_file = "S2_L02_Ex01/mission_computer_main.json"
 
-important_word = ["explosion", "unstable"]
+# important_word = ["explosion", "unstable"]
 
 
 # def filter_important_phrases(path, phrases) :
